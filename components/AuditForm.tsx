@@ -59,7 +59,7 @@ export default function AuditForm() {
     }, 120000);
 
     try {
-      const response = await fetch("/api/audit", {
+      const response = await fetch("/api/quick-audit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -77,8 +77,9 @@ export default function AuditForm() {
       }
 
       setProgress(100);
-      sessionStorage.setItem("auditResult", JSON.stringify(data));
-      router.push("/report");
+sessionStorage.setItem("quickAuditResult", JSON.stringify(data));
+router.push(`/report/${data.auditId}`);
+
     } catch (error) {
       window.clearTimeout(timeoutId);
 

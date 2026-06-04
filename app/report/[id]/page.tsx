@@ -1,26 +1,29 @@
-"use client";
-
+import FixPlanForm from "@/components/FixPlanForm";
 import DeepScanButton from "@/components/DeepScanButton";
-import { useEffect, useState } from "react";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
-type QuickAuditResult = {
-  websiteUrl: string;
-  auditType: "quick";
-  quickScore: number;
+type AuditChecks = {
+  https: boolean;
+  title: boolean;
+  metaDescription: boolean;
+  h1: boolean;
+  phoneNumber: boolean;
+  appointmentCTA: boolean;
+  contactLink: boolean;
+  locationSignals: boolean;
+  trustSignals: boolean;
+  schema: boolean;
+};
+
+type AuditRow = {
+  id: string;
+  created_at: string;
+  website_url: string;
+  audit_type: string;
+  quick_score: number;
   title: string | null;
-  metaDescription: string | null;
-  checks: {
-    https: boolean;
-    title: boolean;
-    metaDescription: boolean;
-    h1: boolean;
-    phoneNumber: boolean;
-    appointmentCTA: boolean;
-    contactLink: boolean;
-    locationSignals: boolean;
-    trustSignals: boolean;
-    schema: boolean;
-  };
+  meta_description: string | null;
+  checks: AuditChecks;
 };
 
 function getScoreLabel(score: number) {
@@ -30,7 +33,7 @@ function getScoreLabel(score: number) {
   return "Patient Opportunity Risk";
 }
 
-const checkLabels: Record<keyof QuickAuditResult["checks"], string> = {
+const checkLabels: Record<keyof AuditChecks, string> = {
   https: "Secure HTTPS website",
   title: "Page title detected",
   metaDescription: "Meta description detected",
@@ -43,7 +46,7 @@ const checkLabels: Record<keyof QuickAuditResult["checks"], string> = {
   schema: "Schema markup detected",
 };
 
-const checkDescriptions: Record<keyof QuickAuditResult["checks"], string> = {
+const checkDescriptions: Record<keyof AuditChecks, string> = {
   https:
     "A secure website helps patients trust the site and prevents browser security warnings.",
   title:
@@ -66,9 +69,7 @@ const checkDescriptions: Record<keyof QuickAuditResult["checks"], string> = {
     "Schema markup gives search engines structured information about the business.",
 };
 
-function buildOpportunities(result: QuickAuditResult) {
-  const checks = result.checks;
-
+function buildOpportunities(checks: AuditChecks) {
   const opportunities: {
     title: string;
     impact: "High" | "Medium" | "Low";
@@ -150,45 +151,40 @@ function buildOpportunities(result: QuickAuditResult) {
   return opportunities.slice(0, 5);
 }
 
-export default function ReportPage() {
-  const [quickAuditResult, setQuickAuditResult] =
-    useState<QuickAuditResult | null>(null);
-  const [generatedAt, setGeneratedAt] = useState("");
+export default async function PermanentReportPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
 
-  useEffect(() => {
-    const storedResult = sessionStorage.getItem("quickAuditResult");
+  const { data, error } = await supabaseAdmin
+    .from("audits")
+    .select("*")
+    .eq("id", id)
+    .single();
 
-    if (storedResult) {
-      setQuickAuditResult(JSON.parse(storedResult));
-    }
-
-    setGeneratedAt(new Date().toLocaleString());
-  }, []);
-
-  if (!quickAuditResult) {
+  if (error || !data) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-slate-50 px-6">
         <div className="rounded-2xl bg-white p-8 text-center shadow-sm">
           <h1 className="text-2xl font-bold text-slate-950">
-            No audit found
+            Report not found
           </h1>
           <p className="mt-3 text-slate-600">
-            Please run a website audit first.
+            This report may have been deleted or the link may be incorrect.
           </p>
         </div>
       </main>
     );
   }
 
-  const passedChecks = Object.entries(quickAuditResult.checks).filter(
-    ([, passed]) => passed,
-  );
-
-  const failedChecks = Object.entries(quickAuditResult.checks).filter(
-    ([, passed]) => !passed,
-  );
-
-  const opportunities = buildOpportunities(quickAuditResult);
+  const audit = data as AuditRow;
+  const checks = audit.checks;
+  const passedChecks = Object.entries(checks).filter(([, passed]) => passed);
+  const failedChecks = Object.entries(checks).filter(([, passed]) => !passed);
+  const opportunities = buildOpportunities(checks);
+  const generatedAt = new Date(audit.created_at).toLocaleString();
 
   return (
     <main className="min-h-screen bg-slate-50 py-12">
@@ -203,14 +199,15 @@ export default function ReportPage() {
           </h1>
 
           <div className="mt-2 space-y-1 text-sm text-slate-500">
-            <p>Website analyzed: {quickAuditResult.websiteUrl}</p>
+            <p>Website analyzed: {audit.website_url}</p>
             <p>Generated: {generatedAt}</p>
+            <p>Report ID: {audit.id}</p>
           </div>
 
           <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:items-center">
             <div className="rounded-2xl bg-blue-50 px-8 py-6 text-center">
               <div className="text-5xl font-bold text-blue-700">
-                {quickAuditResult.quickScore}
+                {audit.quick_score}
               </div>
               <div className="text-sm font-medium text-blue-700">
                 out of 100
@@ -225,7 +222,7 @@ export default function ReportPage() {
               </p>
 
               <p className="mt-3 font-semibold text-blue-700">
-                {getScoreLabel(quickAuditResult.quickScore)}
+                {getScoreLabel(audit.quick_score)}
               </p>
             </div>
           </div>
@@ -283,9 +280,7 @@ export default function ReportPage() {
             {passedChecks.length > 0 ? (
               <ul className="mt-4 space-y-2 text-green-900">
                 {passedChecks.slice(0, 5).map(([key]) => (
-                  <li key={key}>
-                    ✓ {checkLabels[key as keyof QuickAuditResult["checks"]]}
-                  </li>
+                  <li key={key}>✓ {checkLabels[key as keyof AuditChecks]}</li>
                 ))}
               </ul>
             ) : (
@@ -305,9 +300,7 @@ export default function ReportPage() {
                 {failedChecks.slice(0, 5).map(([key]) => (
                   <li key={key}>
                     ✕ Missing{" "}
-                    {checkLabels[
-                      key as keyof QuickAuditResult["checks"]
-                    ].toLowerCase()}
+                    {checkLabels[key as keyof AuditChecks].toLowerCase()}
                   </li>
                 ))}
               </ul>
@@ -331,8 +324,8 @@ export default function ReportPage() {
           </p>
 
           <div className="mt-6 grid gap-4 md:grid-cols-2">
-            {Object.entries(quickAuditResult.checks).map(([key, passed]) => {
-              const typedKey = key as keyof QuickAuditResult["checks"];
+            {Object.entries(checks).map(([key, passed]) => {
+              const typedKey = key as keyof AuditChecks;
 
               return (
                 <article
@@ -426,8 +419,9 @@ export default function ReportPage() {
             performance, accessibility, SEO, and technical health.
           </p>
 
-          <DeepScanButton />
+          <DeepScanButton auditId={audit.id} websiteUrl={audit.website_url} />
         </section>
+        <FixPlanForm auditId={audit.id} />
       </div>
     </main>
   );

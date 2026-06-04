@@ -1,3 +1,4 @@
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { NextResponse } from "next/server";
 
 async function getPageSpeedResult(url: string) {
@@ -45,6 +46,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const websiteUrl = body.websiteUrl;
+    const auditId = body.auditId;
 
     if (!websiteUrl || typeof websiteUrl !== "string") {
       return NextResponse.json(
@@ -53,25 +55,47 @@ export async function POST(request: Request) {
       );
     }
 
-    const normalizedUrl = websiteUrl.startsWith("http")
-      ? websiteUrl
-      : `https://${websiteUrl}`;
+    if (!auditId || typeof auditId !== "string") {
+      return NextResponse.json(
+        { error: "Audit ID is required." },
+        { status: 400 },
+      );
+    }
 
-    const mobileResult = await getPageSpeedResult(normalizedUrl);
+    const mobileResult = await getPageSpeedResult(websiteUrl);
+
+    const deepScores = {
+      mobilePerformance: scoreFromCategory(mobileResult, "performance"),
+      desktopPerformance: null,
+      accessibility: scoreFromCategory(mobileResult, "accessibility"),
+      seo: scoreFromCategory(mobileResult, "seo"),
+      bestPractices: scoreFromCategory(mobileResult, "best-practices"),
+    };
+
+    const { error: updateError } = await supabaseAdmin
+      .from("audits")
+      .update({
+        audit_type: "quick_and_deep",
+        deep_scores: deepScores,
+      })
+      .eq("id", auditId);
+
+    if (updateError) {
+      console.error("Supabase Deep Scan Save Error:", updateError);
+
+      return NextResponse.json(
+        {
+          error:
+            "The deep scan completed, but we could not save it. Please try again.",
+        },
+        { status: 500 },
+      );
+    }
 
     return NextResponse.json({
-      websiteUrl: normalizedUrl,
-      scores: {
-        mobilePerformance: scoreFromCategory(mobileResult, "performance"),
-        desktopPerformance: null,
-        accessibility: scoreFromCategory(mobileResult, "accessibility"),
-        seo: scoreFromCategory(mobileResult, "seo"),
-        bestPractices: scoreFromCategory(mobileResult, "best-practices"),
-      },
-      scanStatus: {
-        mobile: "completed",
-        desktop: "not_run_in_free_scan",
-      },
+      auditId,
+      websiteUrl,
+      scores: deepScores,
     });
   } catch (error) {
     console.error("Audit API Error:", error);
@@ -79,9 +103,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error:
-          error instanceof Error
-            ? error.message
-            : "We could not complete the scan. Please try again.",
+          "Google PageSpeed could not complete the deep scan right now. Please wait 30 seconds and try again.",
       },
       { status: 500 },
     );
