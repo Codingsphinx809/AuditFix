@@ -230,7 +230,7 @@ export default async function LeadsPage() {
                               </Link>
                             )}
 
-                            {audit?.id && audit.deep_scores && (
+                            {audit?.id && Boolean(audit.deep_scores) && (
                               <Link
                                 href={`/deep-report/${audit.id}`}
                                 className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800"
