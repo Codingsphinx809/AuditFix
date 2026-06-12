@@ -114,11 +114,35 @@ export async function POST(request: Request) {
 
     const normalizedUrl = normalizeUrl(websiteUrl);
 
-    const response = await fetch(normalizedUrl, {
+let response: Response;
+let finalUrl = normalizedUrl;
+let httpsValid = normalizedUrl.startsWith("https://");
+
+try {
+  response = await fetch(normalizedUrl, {
+    headers: {
+      "User-Agent": "AuditfixBot/1.0",
+    },
+  });
+} catch (error) {
+  const errorMessage = String(error);
+
+  if (
+    normalizedUrl.startsWith("https://") &&
+    errorMessage.includes("UNABLE_TO_GET_ISSUER_CERT_LOCALLY")
+  ) {
+    finalUrl = normalizedUrl.replace("https://", "http://");
+    httpsValid = false;
+
+    response = await fetch(finalUrl, {
       headers: {
         "User-Agent": "AuditfixBot/1.0",
       },
     });
+  } else {
+    throw error;
+  }
+}
 
     if (!response.ok) {
       return NextResponse.json(
@@ -135,7 +159,7 @@ export async function POST(request: Request) {
     const metaDescription = getMetaDescription(html);
 
     const checks = {
-      https: normalizedUrl.startsWith("https://"),
+      https: httpsValid,
       title: Boolean(title),
       metaDescription: Boolean(metaDescription),
       h1: hasH1(html),
