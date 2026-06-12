@@ -1,18 +1,20 @@
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import Link from "next/link";
 
+type LeadAudit = {
+  id: string;
+  website_url: string;
+  quick_score: number | null;
+  deep_scores: unknown | null;
+};
+
 type LeadRow = {
   id: string;
   created_at: string;
   email: string;
   status: string;
   audit_id: string;
-  audits: {
-    id: string;
-    website_url: string;
-    quick_score: number | null;
-    deep_scores: unknown | null;
-  } | null;
+  audits: LeadAudit[] | null;
 };
 
 function formatDate(date: string) {
@@ -60,16 +62,22 @@ export default async function LeadsPage() {
     );
   }
 
-  const leads = (data ?? []) as LeadRow[];
+  const leads = (data ?? []) as unknown as LeadRow[];
+
   const totalLeads = leads.length;
-  const deepScanLeads = leads.filter((lead) => lead.audits?.deep_scores).length;
+
+  const deepScanLeads = leads.filter((lead) => {
+    const audit = lead.audits?.[0];
+    return audit?.deep_scores;
+  }).length;
+
   const averageScore =
     leads.length > 0
       ? Math.round(
-          leads.reduce(
-            (total, lead) => total + (lead.audits?.quick_score ?? 0),
-            0,
-          ) / leads.length,
+          leads.reduce((total, lead) => {
+            const audit = lead.audits?.[0];
+            return total + (audit?.quick_score ?? 0);
+          }, 0) / leads.length,
         )
       : 0;
 
@@ -157,80 +165,84 @@ export default async function LeadsPage() {
                 </thead>
 
                 <tbody className="divide-y divide-slate-200">
-                  {leads.map((lead) => (
-                    <tr key={lead.id}>
-                      <td className="px-6 py-4">
-                        <p className="font-medium text-slate-950">
-                          {lead.email}
-                        </p>
-                        <p className="mt-1 text-xs text-slate-500">
-                          Lead ID: {lead.id}
-                        </p>
-                      </td>
+                  {leads.map((lead) => {
+                    const audit = lead.audits?.[0] ?? null;
 
-                      <td className="px-6 py-4">
-                        <p className="max-w-xs truncate font-medium text-slate-950">
-                          {lead.audits?.website_url ?? "Unknown website"}
-                        </p>
-                        <p className="mt-1 text-xs text-slate-500">
-                          Audit ID: {lead.audit_id}
-                        </p>
-                      </td>
+                    return (
+                      <tr key={lead.id}>
+                        <td className="px-6 py-4">
+                          <p className="font-medium text-slate-950">
+                            {lead.email}
+                          </p>
+                          <p className="mt-1 text-xs text-slate-500">
+                            Lead ID: {lead.id}
+                          </p>
+                        </td>
 
-                      <td className="px-6 py-4">
-                        <p className="font-semibold text-slate-950">
-                          {lead.audits?.quick_score ?? "—"}
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          {getScoreBadge(lead.audits?.quick_score ?? null)}
-                        </p>
-                      </td>
+                        <td className="px-6 py-4">
+                          <p className="max-w-xs truncate font-medium text-slate-950">
+                            {audit?.website_url ?? "Unknown website"}
+                          </p>
+                          <p className="mt-1 text-xs text-slate-500">
+                            Audit ID: {lead.audit_id}
+                          </p>
+                        </td>
 
-                      <td className="px-6 py-4">
-                        {lead.audits?.deep_scores ? (
-                          <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-                            Completed
-                          </span>
-                        ) : (
-                          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-                            Not run
-                          </span>
-                        )}
-                      </td>
+                        <td className="px-6 py-4">
+                          <p className="font-semibold text-slate-950">
+                            {audit?.quick_score ?? "—"}
+                          </p>
+                          <p className="text-xs text-slate-500">
+                            {getScoreBadge(audit?.quick_score ?? null)}
+                          </p>
+                        </td>
 
-                      <td className="px-6 py-4">
-                        <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
-                          {lead.status}
-                        </span>
-                      </td>
-
-                      <td className="px-6 py-4 text-slate-600">
-                        {formatDate(lead.created_at)}
-                      </td>
-
-                      <td className="px-6 py-4">
-                        <div className="flex flex-wrap gap-2">
-                          {lead.audits?.id && (
-                            <Link
-                              href={`/report/${lead.audits.id}`}
-                              className="rounded-lg bg-blue-700 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-800"
-                            >
-                              Quick Report
-                            </Link>
+                        <td className="px-6 py-4">
+                          {audit?.deep_scores ? (
+                            <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                              Completed
+                            </span>
+                          ) : (
+                            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                              Not run
+                            </span>
                           )}
+                        </td>
 
-                          {lead.audits?.id && lead.audits.deep_scores && (
-                            <Link
-                              href={`/deep-report/${lead.audits.id}`}
-                              className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800"
-                            >
-                              Deep Report
-                            </Link>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                        <td className="px-6 py-4">
+                          <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
+                            {lead.status}
+                          </span>
+                        </td>
+
+                        <td className="px-6 py-4 text-slate-600">
+                          {formatDate(lead.created_at)}
+                        </td>
+
+                        <td className="px-6 py-4">
+                          <div className="flex flex-wrap gap-2">
+                            {audit?.id && (
+                              <Link
+                                href={`/report/${audit.id}`}
+                                className="rounded-lg bg-blue-700 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-800"
+                              >
+                                Quick Report
+                              </Link>
+                            )}
+
+                            {audit?.id && audit.deep_scores && (
+                              <Link
+                                href={`/deep-report/${audit.id}`}
+                                className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800"
+                              >
+                                Deep Report
+                              </Link>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
