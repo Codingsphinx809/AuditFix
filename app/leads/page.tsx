@@ -68,7 +68,7 @@ export default async function LeadsPage() {
 
   const deepScanLeads = leads.filter((lead) => {
     const audit = lead.audits?.[0];
-    return audit?.deep_scores;
+    return Boolean(audit?.deep_scores);
   }).length;
 
   const averageScore =
