@@ -5,6 +5,20 @@ function normalizeUrl(url: string) {
   return url.startsWith("http") ? url : `https://${url}`;
 }
 
+function getFetchErrorCode(error: unknown) {
+  if (
+    error instanceof Error &&
+    "cause" in error &&
+    typeof error.cause === "object" &&
+    error.cause !== null &&
+    "code" in error.cause
+  ) {
+    return String((error.cause as { code?: string }).code);
+  }
+
+  return "";
+}
+
 function hasPhoneNumber(html: string) {
   const phoneRegex =
     /(\+?1[\s.-]?)?(\(?\d{3}\)?[\s.-]?)\d{3}[\s.-]?\d{4}/;
@@ -100,6 +114,16 @@ function calculateQuickScore(checks: Record<string, boolean>) {
   return Math.min(score, 100);
 }
 
+async function fetchWebsite(url: string) {
+  return fetch(url, {
+    headers: {
+      "User-Agent":
+        "Mozilla/5.0 (compatible; AuditfixBot/1.0; +https://dentist.auditfix.ai)",
+      Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    },
+  });
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -114,37 +138,63 @@ export async function POST(request: Request) {
 
     const normalizedUrl = normalizeUrl(websiteUrl);
 
-let response: Response;
-let finalUrl = normalizedUrl;
-let httpsValid = normalizedUrl.startsWith("https://");
+    let response: Response;
+    let finalUrl = normalizedUrl;
+    let httpsValid = normalizedUrl.startsWith("https://");
 
-try {
-  response = await fetch(normalizedUrl, {
-    headers: {
-      "User-Agent": "AuditfixBot/1.0",
-    },
-  });
-} catch (error) {
-  const errorMessage = String(error);
+    try {
+      response = await fetchWebsite(normalizedUrl);
+    } catch (error) {
+      const errorCode = getFetchErrorCode(error);
 
-  if (
-    normalizedUrl.startsWith("https://") &&
-    errorMessage.includes("UNABLE_TO_GET_ISSUER_CERT_LOCALLY")
-  ) {
-    finalUrl = normalizedUrl.replace("https://", "http://");
-    httpsValid = false;
+      console.error("Quick audit HTTPS fetch failed:", {
+        url: normalizedUrl,
+        message: error instanceof Error ? error.message : String(error),
+        code: errorCode,
+      });
 
-    response = await fetch(finalUrl, {
-      headers: {
-        "User-Agent": "AuditfixBot/1.0",
-      },
-    });
-  } else {
-    throw error;
-  }
-}
+      if (normalizedUrl.startsWith("https://")) {
+        finalUrl = normalizedUrl.replace("https://", "http://");
+        httpsValid = false;
+
+        try {
+          response = await fetchWebsite(finalUrl);
+        } catch (fallbackError) {
+          console.error("Quick audit HTTP fallback failed:", {
+            url: finalUrl,
+            message:
+              fallbackError instanceof Error
+                ? fallbackError.message
+                : String(fallbackError),
+            code: getFetchErrorCode(fallbackError),
+          });
+
+          return NextResponse.json(
+            {
+              error:
+                "We could not access this website for a quick audit. The site may be blocking automated checks or may have a certificate issue.",
+            },
+            { status: 500 },
+          );
+        }
+      } else {
+        return NextResponse.json(
+          {
+            error:
+              "We could not access this website for a quick audit. The site may be blocking automated checks.",
+          },
+          { status: 500 },
+        );
+      }
+    }
 
     if (!response.ok) {
+      console.error("Quick audit website returned bad status:", {
+        url: finalUrl,
+        status: response.status,
+        statusText: response.statusText,
+      });
+
       return NextResponse.json(
         {
           error:
