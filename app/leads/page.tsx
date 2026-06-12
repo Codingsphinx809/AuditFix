@@ -62,7 +62,7 @@ export default async function LeadsPage() {
     );
   }
 
-  const leads = (data ?? []) as unknown as LeadRow[];
+ const leads = (data ?? []) as unknown as LeadRow[];
 
   const totalLeads = leads.length;
 
