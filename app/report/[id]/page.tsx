@@ -1,6 +1,7 @@
 import FixPlanForm from "@/components/FixPlanForm";
 import DeepScanButton from "@/components/DeepScanButton";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import ReportActions from "@/components/ReportActions";
 
 type AuditChecks = {
   https: boolean;
