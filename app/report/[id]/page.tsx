@@ -34,6 +34,22 @@ function getScoreLabel(score: number) {
   return "Patient Opportunity Risk";
 }
 
+function getScoreMessage(score: number) {
+  if (score >= 90) {
+    return "Your website shows strong patient-conversion signals. The biggest opportunity now is refinement and competitive advantage.";
+  }
+
+  if (score >= 75) {
+    return "Your website has a strong foundation, but there are still opportunities to improve visibility, trust, and appointment conversion.";
+  }
+
+  if (score >= 60) {
+    return "Your website is showing some useful signals, but several improvements may help more patients find, trust, and contact your practice.";
+  }
+
+  return "Your website may be missing important signals that help patients feel confident enough to call, book, or request an appointment.";
+}
+
 const checkLabels: Record<keyof AuditChecks, string> = {
   https: "Secure HTTPS website",
   title: "Page title detected",
@@ -59,13 +75,13 @@ const checkDescriptions: Record<keyof AuditChecks, string> = {
   phoneNumber:
     "Patients should be able to call the office quickly, especially from mobile search.",
   appointmentCTA:
-    "A clear appointment action helps turn visitors into scheduled s.",
+    "A clear appointment action helps turn website visitors into scheduled patients.",
   contactLink:
-    "s need a simple way to find contact details, office hours, and directions.",
+    "Patients need a simple way to find contact details, office hours, and directions.",
   locationSignals:
-    "Location signals help nearby s and search engines understand where the practice serves.",
+    "Location signals help nearby patients and search engines understand where the practice serves.",
   trustSignals:
-    "Reviews, team information, insurance details, and credentials help s feel confident choosing the practice.",
+    "Reviews, team information, insurance details, and credentials help patients feel confident choosing the practice.",
   schema:
     "Schema markup gives search engines structured information about the business.",
 };
@@ -82,7 +98,7 @@ function buildOpportunities(checks: AuditChecks) {
       title: "Make appointment booking easier to find",
       impact: "High",
       message:
-        "s should be able to request or schedule an appointment within seconds of landing on the website.",
+        "Patients should be able to request or schedule an appointment within seconds of landing on the website.",
     });
   }
 
@@ -91,7 +107,7 @@ function buildOpportunities(checks: AuditChecks) {
       title: "Make the phone number more visible",
       impact: "High",
       message:
-        "Many dental s want to call directly from mobile search. A visible click-to-call option can reduce friction.",
+        "Many dental patients want to call directly from mobile search. A visible click-to-call option can reduce friction.",
     });
   }
 
@@ -100,16 +116,16 @@ function buildOpportunities(checks: AuditChecks) {
       title: "Strengthen local location signals",
       impact: "High",
       message:
-        "Adding clear city, neighborhood, address, or service-area language can help nearby s understand where the practice is located.",
+        "Adding clear city, neighborhood, address, or service-area language can help nearby patients understand where the practice is located.",
     });
   }
 
   if (!checks.trustSignals) {
     opportunities.push({
-      title: "Add stronger  trust signals",
+      title: "Add stronger patient trust signals",
       impact: "Medium",
       message:
-        "Reviews, testimonials, team information, insurance details, and credentials can help new s feel more comfortable contacting the practice.",
+        "Reviews, testimonials, team information, insurance details, and credentials can help new patients feel more comfortable contacting the practice.",
     });
   }
 
@@ -118,7 +134,7 @@ function buildOpportunities(checks: AuditChecks) {
       title: "Add a stronger search result description",
       impact: "Medium",
       message:
-        "A clear meta description can make the practice look more relevant and trustworthy when s see it in search results.",
+        "A clear meta description can make the practice look more relevant and trustworthy when patients see it in search results.",
     });
   }
 
@@ -136,7 +152,7 @@ function buildOpportunities(checks: AuditChecks) {
       title: "Add a clear main page heading",
       impact: "Low",
       message:
-        "A strong main heading helps s immediately understand the practice and services.",
+        "A strong main heading helps patients immediately understand the practice and services.",
     });
   }
 
@@ -150,6 +166,20 @@ function buildOpportunities(checks: AuditChecks) {
   }
 
   return opportunities.slice(0, 5);
+}
+
+function getPotentialImpact(checks: AuditChecks) {
+  const impactItems = [];
+
+  if (!checks.appointmentCTA) impactItems.push("Easier appointment booking");
+  if (!checks.phoneNumber) impactItems.push("More direct phone inquiries");
+  if (!checks.locationSignals) impactItems.push("Stronger local visibility");
+  if (!checks.trustSignals) impactItems.push("Improved patient trust");
+  if (!checks.metaDescription) impactItems.push("Better search presentation");
+  if (!checks.schema) impactItems.push("Clearer search engine understanding");
+  if (!checks.https) impactItems.push("More secure browsing experience");
+
+  return impactItems.slice(0, 4);
 }
 
 export default async function PermanentReportPage({
@@ -185,6 +215,7 @@ export default async function PermanentReportPage({
   const passedChecks = Object.entries(checks).filter(([, passed]) => passed);
   const failedChecks = Object.entries(checks).filter(([, passed]) => !passed);
   const opportunities = buildOpportunities(checks);
+  const potentialImpact = getPotentialImpact(checks);
   const generatedAt = new Date(audit.created_at).toLocaleString();
 
   return (
@@ -217,9 +248,7 @@ export default async function PermanentReportPage({
 
             <div>
               <p className="max-w-xl text-slate-600">
-                This quick audit reviews visible homepage signals that may
-                affect patient trust, local visibility, and appointment
-                conversion.
+                {getScoreMessage(audit.quick_score)}
               </p>
 
               <p className="mt-3 font-semibold text-blue-700">
@@ -228,12 +257,12 @@ export default async function PermanentReportPage({
             </div>
           </div>
         </section>
-        
+
         <ReportActions
           reportTitle="AuditFix Patient Growth Quick Report"
           websiteUrl={audit.website_url}
         />
-        
+
         <section className="mt-8 rounded-2xl border border-blue-100 bg-blue-50 p-6">
           <h2 className="text-xl font-bold text-slate-950">
             How this quick audit was calculated
@@ -241,7 +270,7 @@ export default async function PermanentReportPage({
 
           <p className="mt-2 text-slate-700">
             This report is based on a live scan of the website homepage you
-            entered. Auditfix reviews visible patient-conversion signals such as
+            entered. AuditFix reviews visible patient-conversion signals such as
             appointment calls-to-action, contact information, trust indicators,
             location signals, search visibility elements, and website security.
           </p>
@@ -261,7 +290,7 @@ export default async function PermanentReportPage({
                 No manual scoring
               </p>
               <p className="mt-1">
-                Auditfix automatically calculates scores based on detected
+                AuditFix automatically calculates scores based on detected
                 signals.
               </p>
             </div>
@@ -317,6 +346,40 @@ export default async function PermanentReportPage({
               </p>
             )}
           </div>
+        </section>
+
+        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+          <h2 className="text-2xl font-bold text-slate-950">
+            Potential Patient Growth Opportunity
+          </h2>
+
+          <p className="mt-3 max-w-3xl text-slate-600">
+            Based on the missing signals detected in this quick audit, these
+            are the areas most likely to improve how many patients find, trust,
+            and contact the practice.
+          </p>
+
+          {potentialImpact.length > 0 ? (
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              {potentialImpact.map((item) => (
+                <div key={item} className="rounded-2xl bg-slate-50 p-5">
+                  <p className="font-semibold text-slate-950">✓ {item}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-6 rounded-xl bg-green-50 p-4 text-green-900">
+              Your quick audit did not detect major missing conversion signals.
+              A deep scan may still uncover speed, accessibility, or technical
+              opportunities.
+            </p>
+          )}
+
+          <p className="mt-5 text-sm text-slate-500">
+            Estimated impact varies by market, website traffic, and local
+            competition. This section highlights opportunity areas, not a
+            guaranteed result.
+          </p>
         </section>
 
         <section className="mt-8 rounded-2xl bg-white p-6 shadow-sm">
@@ -414,20 +477,104 @@ export default async function PermanentReportPage({
           )}
         </section>
 
-        <section className="mt-8 rounded-2xl bg-blue-700 p-8 text-white">
-          <h2 className="text-2xl font-bold">
-            Want a Deeper Speed and Accessibility Scan?
+        <section className="mt-8 rounded-3xl bg-blue-700 p-8 text-white shadow-sm">
+          <span className="rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+            Next Step
+          </span>
+
+          <h2 className="mt-4 text-3xl font-bold">
+            Want a Deeper Performance and Accessibility Scan?
           </h2>
 
-          <p className="mt-3 max-w-2xl text-blue-100">
-            The quick audit gives immediate homepage insights. A deeper scan can
-            take 1–2 minutes because it uses Google PageSpeed data to analyze
-            performance, accessibility, SEO, and technical health.
+          <p className="mt-4 max-w-3xl text-blue-100">
+            Your quick audit reviews visible patient-conversion signals. A Deep
+            Scan uses Google PageSpeed Insights to analyze performance,
+            accessibility, SEO, and technical issues that may affect patient
+            experience and search visibility.
           </p>
 
-          <DeepScanButton auditId={audit.id} websiteUrl={audit.website_url} />
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            <div className="rounded-2xl bg-blue-600/40 p-4">
+              <p className="font-semibold">Performance</p>
+              <p className="mt-2 text-sm text-blue-100">
+                Discover speed bottlenecks that may frustrate patients.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-blue-600/40 p-4">
+              <p className="font-semibold">Accessibility</p>
+              <p className="mt-2 text-sm text-blue-100">
+                Ensure your website works well for all patients.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-blue-600/40 p-4">
+              <p className="font-semibold">SEO & Technical Health</p>
+              <p className="mt-2 text-sm text-blue-100">
+                Identify hidden issues impacting discoverability.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <DeepScanButton auditId={audit.id} websiteUrl={audit.website_url} />
+          </div>
         </section>
-        <FixPlanForm auditId={audit.id} />
+
+        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+          <h2 className="text-3xl font-bold text-slate-950">
+            Questions About Your Score?
+          </h2>
+
+          <p className="mt-4 max-w-3xl text-slate-600">
+            Receive a personalized improvement plan focused on increasing
+            appointment requests, improving local visibility, building patient
+            trust, and creating a better mobile experience.
+          </p>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl bg-slate-50 p-5">
+              <p className="font-semibold text-slate-950">
+                ✓ More Appointment Requests
+              </p>
+              <p className="mt-2 text-sm text-slate-600">
+                Recommendations that help visitors become patients.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-slate-50 p-5">
+              <p className="font-semibold text-slate-950">
+                ✓ Better Local Visibility
+              </p>
+              <p className="mt-2 text-sm text-slate-600">
+                Improve your chances of appearing in local searches.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-slate-50 p-5">
+              <p className="font-semibold text-slate-950">
+                ✓ Improved Patient Trust
+              </p>
+              <p className="mt-2 text-sm text-slate-600">
+                Build credibility through reviews, trust signals, and clear
+                information.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-slate-50 p-5">
+              <p className="font-semibold text-slate-950">
+                ✓ Faster Mobile Experience
+              </p>
+              <p className="mt-2 text-sm text-slate-600">
+                Deliver a smoother experience for mobile visitors.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <FixPlanForm auditId={audit.id} />
+          </div>
+        </section>
       </div>
     </main>
   );
