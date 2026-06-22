@@ -59,13 +59,13 @@ const checkDescriptions: Record<keyof AuditChecks, string> = {
   phoneNumber:
     "Patients should be able to call the office quickly, especially from mobile search.",
   appointmentCTA:
-    "A clear appointment action helps turn visitors into scheduled patients.",
+    "A clear appointment action helps turn visitors into scheduled s.",
   contactLink:
-    "Patients need a simple way to find contact details, office hours, and directions.",
+    "s need a simple way to find contact details, office hours, and directions.",
   locationSignals:
-    "Location signals help nearby patients and search engines understand where the practice serves.",
+    "Location signals help nearby s and search engines understand where the practice serves.",
   trustSignals:
-    "Reviews, team information, insurance details, and credentials help patients feel confident choosing the practice.",
+    "Reviews, team information, insurance details, and credentials help s feel confident choosing the practice.",
   schema:
     "Schema markup gives search engines structured information about the business.",
 };
@@ -82,7 +82,7 @@ function buildOpportunities(checks: AuditChecks) {
       title: "Make appointment booking easier to find",
       impact: "High",
       message:
-        "Patients should be able to request or schedule an appointment within seconds of landing on the website.",
+        "s should be able to request or schedule an appointment within seconds of landing on the website.",
     });
   }
 
@@ -91,7 +91,7 @@ function buildOpportunities(checks: AuditChecks) {
       title: "Make the phone number more visible",
       impact: "High",
       message:
-        "Many dental patients want to call directly from mobile search. A visible click-to-call option can reduce friction.",
+        "Many dental s want to call directly from mobile search. A visible click-to-call option can reduce friction.",
     });
   }
 
@@ -100,16 +100,16 @@ function buildOpportunities(checks: AuditChecks) {
       title: "Strengthen local location signals",
       impact: "High",
       message:
-        "Adding clear city, neighborhood, address, or service-area language can help nearby patients understand where the practice is located.",
+        "Adding clear city, neighborhood, address, or service-area language can help nearby s understand where the practice is located.",
     });
   }
 
   if (!checks.trustSignals) {
     opportunities.push({
-      title: "Add stronger patient trust signals",
+      title: "Add stronger  trust signals",
       impact: "Medium",
       message:
-        "Reviews, testimonials, team information, insurance details, and credentials can help new patients feel more comfortable contacting the practice.",
+        "Reviews, testimonials, team information, insurance details, and credentials can help new s feel more comfortable contacting the practice.",
     });
   }
 
@@ -118,7 +118,7 @@ function buildOpportunities(checks: AuditChecks) {
       title: "Add a stronger search result description",
       impact: "Medium",
       message:
-        "A clear meta description can make the practice look more relevant and trustworthy when patients see it in search results.",
+        "A clear meta description can make the practice look more relevant and trustworthy when s see it in search results.",
     });
   }
 
@@ -136,7 +136,7 @@ function buildOpportunities(checks: AuditChecks) {
       title: "Add a clear main page heading",
       impact: "Low",
       message:
-        "A strong main heading helps patients immediately understand the practice and services.",
+        "A strong main heading helps s immediately understand the practice and services.",
     });
   }
 
@@ -228,7 +228,12 @@ export default async function PermanentReportPage({
             </div>
           </div>
         </section>
-
+        
+        <ReportActions
+          reportTitle="AuditFix Patient Growth Quick Report"
+          websiteUrl={audit.website_url}
+        />
+        
         <section className="mt-8 rounded-2xl border border-blue-100 bg-blue-50 p-6">
           <h2 className="text-xl font-bold text-slate-950">
             How this quick audit was calculated
