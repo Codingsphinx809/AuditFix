@@ -128,7 +128,7 @@ router.push(`/report/${data.auditId}`);
             required
             value={websiteUrl}
             onChange={(event) => setWebsiteUrl(event.target.value)}
-            placeholder="Enter your practice website (example: yourdentalpractice.com)"
+            placeholder="Enter your practice website (e.g., yourdentalpractice.com)"
             <p className="mt-2 text-xs text-slate-500">
                 You can enter your website with or without https://
             </p>
