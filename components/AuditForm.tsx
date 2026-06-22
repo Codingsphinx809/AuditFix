@@ -52,6 +52,15 @@ export default function AuditForm() {
     setMessageIndex(0);
     setIsLoading(true);
 
+    let normalizedUrl = websiteUrl.trim();
+
+    if (
+      !normalizedUrl.startsWith("http://") &&
+      !normalizedUrl.startsWith("https://")
+       ) {
+      normalizedUrl = `https://${normalizedUrl}`;
+         }
+    
     const controller = new AbortController();
 
     const timeoutId = window.setTimeout(() => {
@@ -64,7 +73,7 @@ export default function AuditForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ websiteUrl }),
+        body: JSON.stringify({ websiteUrl: normalizedUrl, }),
         signal: controller.signal,
       });
 
@@ -119,7 +128,7 @@ router.push(`/report/${data.auditId}`);
             required
             value={websiteUrl}
             onChange={(event) => setWebsiteUrl(event.target.value)}
-            placeholder="https://yourdentalpractice.com"
+            placeholder="Enter your practice website (example: yourdentalpractice.com)"
             className="w-full rounded-xl border border-slate-300 px-4 py-3 text-base outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
           />
 
