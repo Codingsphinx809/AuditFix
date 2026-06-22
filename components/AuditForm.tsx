@@ -50,17 +50,34 @@ export default function AuditForm() {
     setError("");
     setProgress(0);
     setMessageIndex(0);
-    setIsLoading(true);
 
     let normalizedUrl = websiteUrl.trim();
+
+    if (!normalizedUrl) {
+      setError(
+        "Please enter your practice website, for example: yourdentalpractice.com",
+      );
+      return;
+    }
 
     if (
       !normalizedUrl.startsWith("http://") &&
       !normalizedUrl.startsWith("https://")
-       ) {
+    ) {
       normalizedUrl = `https://${normalizedUrl}`;
-         }
-    
+    }
+
+    try {
+      new URL(normalizedUrl);
+    } catch {
+      setError(
+        "Please enter a valid website address, for example: yourdentalpractice.com",
+      );
+      return;
+    }
+
+    setIsLoading(true);
+
     const controller = new AbortController();
 
     const timeoutId = window.setTimeout(() => {
@@ -73,7 +90,7 @@ export default function AuditForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ websiteUrl: normalizedUrl, }),
+        body: JSON.stringify({ websiteUrl: normalizedUrl }),
         signal: controller.signal,
       });
 
@@ -86,15 +103,14 @@ export default function AuditForm() {
       }
 
       setProgress(100);
-sessionStorage.setItem("quickAuditResult", JSON.stringify(data));
-router.push(`/report/${data.auditId}`);
-
+      sessionStorage.setItem("quickAuditResult", JSON.stringify(data));
+      router.push(`/report/${data.auditId}`);
     } catch (error) {
       window.clearTimeout(timeoutId);
 
       if (error instanceof Error && error.name === "AbortError") {
         setError(
-          "This scan is taking longer than expected. The website may be slow or blocking automated testing. Please try another URL.",
+          "This scan is taking longer than expected. The website may be slow or blocking automated testing. Please try another website.",
         );
       } else {
         setError(
@@ -124,16 +140,17 @@ router.push(`/report/${data.auditId}`);
           <input
             id="website"
             name="website"
-            type="url"
+            type="text"
             required
             value={websiteUrl}
             onChange={(event) => setWebsiteUrl(event.target.value)}
             placeholder="Enter your practice website (e.g., yourdentalpractice.com)"
-            <p className="mt-2 text-xs text-slate-500">
-                You can enter your website with or without https://
-            </p>
             className="w-full rounded-xl border border-slate-300 px-4 py-3 text-base outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
           />
+
+          <p className="mt-2 text-xs text-slate-500">
+            You can enter your website with or without https://
+          </p>
 
           {error && (
             <p className="mt-3 text-sm font-medium text-red-700">{error}</p>
@@ -166,7 +183,8 @@ router.push(`/report/${data.auditId}`);
           </div>
 
           <p className="mt-2 text-sm text-slate-500">
-            This can take up to 1–2 minutes because we are collecting real PageSpeed data.
+            This can take up to 1–2 minutes because we are collecting real
+            website data.
           </p>
         </div>
       )}
