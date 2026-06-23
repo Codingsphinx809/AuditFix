@@ -50,6 +50,14 @@ function getScoreMessage(score: number) {
   return "Your website may be missing important signals that help patients feel confident enough to call, book, or request an appointment.";
 }
 
+function getIndustryComparison(score: number) {
+  return {
+    industryAverage: 59,
+    topPractices: 86,
+    differenceFromAverage: score - 59,
+  };
+}
+
 const checkLabels: Record<keyof AuditChecks, string> = {
   https: "Secure HTTPS website",
   title: "Page title detected",
@@ -217,6 +225,7 @@ export default async function PermanentReportPage({
   const opportunities = buildOpportunities(checks);
   const potentialImpact = getPotentialImpact(checks);
   const generatedAt = new Date(audit.created_at).toLocaleString();
+  const benchmark = getIndustryComparison(audit.quick_score);
 
   return (
     <main className="min-h-screen bg-slate-50 py-12">
@@ -381,6 +390,64 @@ export default async function PermanentReportPage({
             guaranteed result.
           </p>
         </section>
+
+<section className="mt-8 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+  <h2 className="text-2xl font-bold text-slate-950">
+    Industry Benchmark Comparison
+  </h2>
+
+  <p className="mt-3 max-w-3xl text-slate-600">
+    Your score becomes more meaningful when compared against typical dental
+    websites and high-performing practices.
+  </p>
+
+  <div className="mt-8 grid gap-4 md:grid-cols-3">
+    <div className="rounded-2xl border border-slate-200 p-6 text-center">
+      <p className="text-sm text-slate-500">Your Practice</p>
+
+      <div className="mt-3 text-5xl font-bold text-blue-700">
+        {audit.quick_score}
+      </div>
+    </div>
+
+    <div className="rounded-2xl border border-slate-200 p-6 text-center">
+      <p className="text-sm text-slate-500">Industry Average</p>
+
+      <div className="mt-3 text-5xl font-bold text-slate-700">
+        {benchmark.industryAverage}
+      </div>
+    </div>
+
+    <div className="rounded-2xl border border-slate-200 p-6 text-center">
+      <p className="text-sm text-slate-500">Top Dental Websites</p>
+
+      <div className="mt-3 text-5xl font-bold text-green-700">
+        {benchmark.topPractices}
+      </div>
+    </div>
+  </div>
+
+  <div className="mt-8 rounded-2xl bg-slate-50 p-6">
+    {audit.quick_score >= benchmark.topPractices ? (
+      <p className="font-medium text-green-700">
+        Your website performs at the level of many top-performing dental
+        websites.
+      </p>
+    ) : audit.quick_score >= benchmark.industryAverage ? (
+      <p className="font-medium text-blue-700">
+        Your website is performing above the dental industry average, but
+        there are still opportunities to close the gap with top-performing
+        practices.
+      </p>
+    ) : (
+      <p className="font-medium text-amber-700">
+        Your website is currently below the industry average. Addressing the
+        opportunities identified in this report may improve patient trust,
+        visibility, and appointment conversion.
+      </p>
+    )}
+  </div>
+</section>
 
         <section className="mt-8 rounded-2xl bg-white p-6 shadow-sm">
           <h2 className="text-2xl font-bold text-slate-950">
