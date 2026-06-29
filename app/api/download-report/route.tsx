@@ -204,7 +204,7 @@ export async function POST(request: Request) {
       />,
     );
 
-    return new Response(pdfBuffer, {
+    return new Response(pdfBuffer.buffer.slice(pdfBuffer.byteOffset, pdfBuffer.byteOffset + pdfBuffer.byteLength), {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="auditfix-report-${auditId}.pdf"`,
