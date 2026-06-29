@@ -62,7 +62,7 @@ https://dentist.auditfix.ai`,
             <div className="text-2xl">📥</div>
 
             <h3 className="mt-3 font-semibold text-slate-950">
-              Download PDF Report
+              Download / Print Report
             </h3>
 
             <p className="mt-2 text-sm text-slate-600">
