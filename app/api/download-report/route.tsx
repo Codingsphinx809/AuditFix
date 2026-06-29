@@ -204,12 +204,18 @@ export async function POST(request: Request) {
       />,
     );
 
-    return new Response(pdfBuffer.buffer.slice(pdfBuffer.byteOffset, pdfBuffer.byteOffset + pdfBuffer.byteLength), {
-      headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="auditfix-report-${auditId}.pdf"`,
-      },
-    });
+return new Response(
+  pdfBuffer.buffer.slice(
+    pdfBuffer.byteOffset,
+    pdfBuffer.byteOffset + pdfBuffer.byteLength,
+  ),
+  {
+    headers: {
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="auditfix-report-${auditId}.pdf"`,
+    },
+  },
+);
   } catch (error) {
     console.error("PDF Report Error:", error);
 
