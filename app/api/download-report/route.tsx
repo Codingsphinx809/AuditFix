@@ -19,7 +19,8 @@ const styles = StyleSheet.create({
     color: "#0f172a",
   },
   header: {
-    borderBottom: "2px solid #2563eb",
+    borderBottomWidth: 2,
+    borderBottomColor: "#2563eb",
     paddingBottom: 16,
     marginBottom: 24,
   },
@@ -57,7 +58,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   card: {
-    border: "1px solid #e2e8f0",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
     borderRadius: 10,
     padding: 12,
     marginBottom: 8,
@@ -65,7 +67,8 @@ const styles = StyleSheet.create({
   footer: {
     marginTop: 30,
     paddingTop: 12,
-    borderTop: "1px solid #e2e8f0",
+    borderTopWidth: 1,
+    borderTopColor: "#e2e8f0",
     color: "#64748b",
     fontSize: 9,
   },
@@ -116,7 +119,6 @@ function ReportPdf({
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Industry Benchmark</Text>
-
           <View style={styles.card}>
             <Text>Your Practice: {score}</Text>
             <Text>Industry Average: 59</Text>
@@ -128,7 +130,6 @@ function ReportPdf({
           <Text style={styles.sectionTitle}>
             Estimated Patient Growth Opportunity
           </Text>
-
           <View style={styles.card}>
             <Text>Potential impact: 1–5 more inquiries/month</Text>
             <Text>
@@ -140,12 +141,11 @@ function ReportPdf({
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Recommended Focus Areas</Text>
-
           <View style={styles.card}>
-            <Text>✓ Improve appointment conversion</Text>
-            <Text>✓ Strengthen local visibility</Text>
-            <Text>✓ Build patient trust</Text>
-            <Text>✓ Improve mobile experience</Text>
+            <Text>Improve appointment conversion</Text>
+            <Text>Strengthen local visibility</Text>
+            <Text>Build patient trust</Text>
+            <Text>Improve mobile experience</Text>
           </View>
         </View>
 
@@ -185,15 +185,19 @@ export async function POST(request: Request) {
     }
 
     const score =
-      audit.deep_scores?.mobilePerformance !== undefined &&
-      audit.deep_scores !== null
+      audit.deep_scores &&
+      typeof audit.deep_scores === "object" &&
+      "mobilePerformance" in audit.deep_scores
         ? Math.round(
-            (audit.deep_scores.mobilePerformance ?? 0) * 0.4 +
-              (audit.deep_scores.seo ?? 0) * 0.25 +
-              (audit.deep_scores.accessibility ?? 0) * 0.2 +
-              (audit.deep_scores.bestPractices ?? 0) * 0.15,
+            ((audit.deep_scores.mobilePerformance as number | null) ?? 0) *
+              0.4 +
+              ((audit.deep_scores.seo as number | null) ?? 0) * 0.25 +
+              ((audit.deep_scores.accessibility as number | null) ?? 0) *
+                0.2 +
+              ((audit.deep_scores.bestPractices as number | null) ?? 0) *
+                0.15,
           )
-        : audit.quick_score;
+        : audit.quick_score ?? 0;
 
     const pdfBuffer = await renderToBuffer(
       <ReportPdf
@@ -204,18 +208,18 @@ export async function POST(request: Request) {
       />,
     );
 
-return new Response(
-  pdfBuffer.buffer.slice(
-    pdfBuffer.byteOffset,
-    pdfBuffer.byteOffset + pdfBuffer.byteLength,
-  ),
-  {
-    headers: {
-      "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="auditfix-report-${auditId}.pdf"`,
-    },
-  },
-);
+    const pdfBytes = new Uint8Array(
+      pdfBuffer.buffer,
+      pdfBuffer.byteOffset,
+      pdfBuffer.byteLength,
+    );
+
+    return new Response(pdfBytes, {
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": `attachment; filename="auditfix-report-${auditId}.pdf"`,
+      },
+    });
   } catch (error) {
     console.error("PDF Report Error:", error);
 
