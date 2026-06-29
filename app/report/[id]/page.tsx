@@ -449,6 +449,52 @@ export default async function PermanentReportPage({
   </div>
 </section>
 
+
+        <section className="mt-8 rounded-3xl border border-green-100 bg-green-50 p-8 shadow-sm">
+  <h2 className="text-2xl font-bold text-slate-950">
+    Estimated Patient Growth Opportunity
+  </h2>
+
+  <p className="mt-3 max-w-3xl text-slate-700">
+    Based on the opportunities detected, your website may be missing signals
+    that help visitors become patient inquiries.
+  </p>
+
+  <div className="mt-8 grid gap-4 md:grid-cols-2">
+    <div className="rounded-2xl bg-white p-5">
+      <p className="font-semibold text-slate-950">
+        Potential Impact
+      </p>
+      <p className="mt-2 text-3xl font-bold text-green-700">
+        1–5 more inquiries/month
+      </p>
+      <p className="mt-2 text-sm text-slate-600">
+        This is a directional estimate based on common dental website
+        conversion opportunities.
+      </p>
+    </div>
+
+    <div className="rounded-2xl bg-white p-5">
+      <p className="font-semibold text-slate-950">
+        Highest-Leverage Fixes
+      </p>
+
+      <ul className="mt-3 space-y-2 text-sm text-slate-700">
+        <li>✓ Make appointment booking easier</li>
+        <li>✓ Strengthen local visibility</li>
+        <li>✓ Add patient trust signals</li>
+        <li>✓ Improve mobile experience</li>
+      </ul>
+    </div>
+  </div>
+
+  <p className="mt-5 text-sm text-slate-500">
+    This estimate is not a guarantee. Actual results depend on website traffic,
+    local competition, offer strength, and follow-up process.
+  </p>
+</section>
+
+        
         <section className="mt-8 rounded-2xl bg-white p-6 shadow-sm">
           <h2 className="text-2xl font-bold text-slate-950">
             Evidence Behind Your Score
