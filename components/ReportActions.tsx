@@ -1,3 +1,5 @@
+import EmailReportButton from "@/components/EmailReportButton";
+
 "use client";
 
 import Link from "next/link";
