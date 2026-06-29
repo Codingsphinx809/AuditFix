@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import FixPlanForm from "@/components/FixPlanForm";
+import ReportActions from "@/components/ReportActions";
 
 type DeepScores = {
   mobilePerformance: number | null;
@@ -211,6 +212,11 @@ export default async function PermanentDeepReportPage({
           </div>
         </section>
 
+        <ReportActions
+          reportTitle="AuditFix Patient Growth Deep Report"
+          websiteUrl={audit.website_url}
+        />
+
         <section className="mt-8 rounded-2xl border border-blue-100 bg-blue-50 p-6">
           <h2 className="text-xl font-bold text-slate-950">
             How this deep scan was calculated
@@ -218,7 +224,7 @@ export default async function PermanentDeepReportPage({
 
           <p className="mt-2 text-slate-700">
             This report uses live Google PageSpeed/Lighthouse data for the
-            website you entered. Auditfix translates those results into
+            website you entered. AuditFix translates those results into
             patient-growth language so you can understand how performance,
             accessibility, SEO, and technical quality may affect patient calls,
             trust, and appointment requests.
@@ -237,7 +243,7 @@ export default async function PermanentDeepReportPage({
             <div className="rounded-xl bg-white p-4">
               <p className="font-semibold text-slate-950">No manual editing</p>
               <p className="mt-1">
-                Auditfix does not manually change these scores.
+                AuditFix does not manually change these scores.
               </p>
             </div>
 
@@ -276,6 +282,49 @@ export default async function PermanentDeepReportPage({
               </p>
             </article>
           ))}
+        </section>
+
+        <section className="mt-8 rounded-3xl border border-green-100 bg-green-50 p-8 shadow-sm">
+          <h2 className="text-2xl font-bold text-slate-950">
+            Estimated Patient Growth Opportunity
+          </h2>
+
+          <p className="mt-3 max-w-3xl text-slate-700">
+            Based on your deep scan, your website may have opportunities to
+            improve mobile experience, trust, search visibility, and appointment
+            conversion.
+          </p>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl bg-white p-5">
+              <p className="font-semibold text-slate-950">Potential Impact</p>
+              <p className="mt-2 text-3xl font-bold text-green-700">
+                1–5 more inquiries/month
+              </p>
+              <p className="mt-2 text-sm text-slate-600">
+                Directional estimate based on common dental website improvement
+                opportunities.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-white p-5">
+              <p className="font-semibold text-slate-950">
+                Highest-Leverage Fixes
+              </p>
+
+              <ul className="mt-3 space-y-2 text-sm text-slate-700">
+                <li>✓ Improve mobile speed</li>
+                <li>✓ Strengthen SEO readiness</li>
+                <li>✓ Improve accessibility</li>
+                <li>✓ Build patient trust</li>
+              </ul>
+            </div>
+          </div>
+
+          <p className="mt-5 text-sm text-slate-500">
+            This estimate is not a guarantee. Actual results depend on website
+            traffic, local competition, offer strength, and follow-up process.
+          </p>
         </section>
 
         <section className="mt-8 rounded-2xl bg-white p-6 shadow-sm">
@@ -336,7 +385,64 @@ export default async function PermanentDeepReportPage({
             </p>
           )}
         </section>
-        <FixPlanForm auditId={audit.id} />
+
+        <section
+          id="fix-plan"
+          className="mt-8 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm"
+        >
+          <h2 className="text-3xl font-bold text-slate-950">
+            Questions About Your Deep Score?
+          </h2>
+
+          <p className="mt-4 max-w-3xl text-slate-600">
+            Receive a personalized improvement plan focused on increasing
+            appointment requests, improving local visibility, building patient
+            trust, and creating a better mobile experience.
+          </p>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl bg-slate-50 p-5">
+              <p className="font-semibold text-slate-950">
+                ✓ More Appointment Requests
+              </p>
+              <p className="mt-2 text-sm text-slate-600">
+                Recommendations that help visitors become patients.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-slate-50 p-5">
+              <p className="font-semibold text-slate-950">
+                ✓ Better Local Visibility
+              </p>
+              <p className="mt-2 text-sm text-slate-600">
+                Improve your chances of appearing in local searches.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-slate-50 p-5">
+              <p className="font-semibold text-slate-950">
+                ✓ Improved Patient Trust
+              </p>
+              <p className="mt-2 text-sm text-slate-600">
+                Build credibility through reviews, trust signals, and clear
+                information.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-slate-50 p-5">
+              <p className="font-semibold text-slate-950">
+                ✓ Faster Mobile Experience
+              </p>
+              <p className="mt-2 text-sm text-slate-600">
+                Deliver a smoother experience for mobile visitors.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <FixPlanForm auditId={audit.id} />
+          </div>
+        </section>
       </div>
     </main>
   );
