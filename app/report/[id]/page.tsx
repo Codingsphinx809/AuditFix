@@ -363,9 +363,9 @@ export default async function PermanentReportPage({
           </h2>
 
           <p className="mt-3 max-w-3xl text-slate-600">
-            Based on the missing signals detected in this quick audit, these
-            are the areas most likely to improve how many patients find, trust,
-            and contact the practice.
+            Based on the missing signals detected in this quick audit, these are
+            the areas most likely to improve how many patients find, trust, and
+            contact the practice.
           </p>
 
           {potentialImpact.length > 0 ? (
@@ -391,110 +391,103 @@ export default async function PermanentReportPage({
           </p>
         </section>
 
-<section className="mt-8 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-  <h2 className="text-2xl font-bold text-slate-950">
-    Industry Benchmark Comparison
-  </h2>
+        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+          <h2 className="text-2xl font-bold text-slate-950">
+            Industry Benchmark Comparison
+          </h2>
 
-  <p className="mt-3 max-w-3xl text-slate-600">
-    Your score becomes more meaningful when compared against typical dental
-    websites and high-performing practices.
-  </p>
+          <p className="mt-3 max-w-3xl text-slate-600">
+            Your score becomes more meaningful when compared against typical
+            dental websites and high-performing practices.
+          </p>
 
-  <div className="mt-8 grid gap-4 md:grid-cols-3">
-    <div className="rounded-2xl border border-slate-200 p-6 text-center">
-      <p className="text-sm text-slate-500">Your Practice</p>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <div className="rounded-2xl border border-slate-200 p-6 text-center">
+              <p className="text-sm text-slate-500">Your Practice</p>
+              <div className="mt-3 text-5xl font-bold text-blue-700">
+                {audit.quick_score}
+              </div>
+            </div>
 
-      <div className="mt-3 text-5xl font-bold text-blue-700">
-        {audit.quick_score}
-      </div>
-    </div>
+            <div className="rounded-2xl border border-slate-200 p-6 text-center">
+              <p className="text-sm text-slate-500">Industry Average</p>
+              <div className="mt-3 text-5xl font-bold text-slate-700">
+                {benchmark.industryAverage}
+              </div>
+            </div>
 
-    <div className="rounded-2xl border border-slate-200 p-6 text-center">
-      <p className="text-sm text-slate-500">Industry Average</p>
+            <div className="rounded-2xl border border-slate-200 p-6 text-center">
+              <p className="text-sm text-slate-500">Top Dental Websites</p>
+              <div className="mt-3 text-5xl font-bold text-green-700">
+                {benchmark.topPractices}
+              </div>
+            </div>
+          </div>
 
-      <div className="mt-3 text-5xl font-bold text-slate-700">
-        {benchmark.industryAverage}
-      </div>
-    </div>
-
-    <div className="rounded-2xl border border-slate-200 p-6 text-center">
-      <p className="text-sm text-slate-500">Top Dental Websites</p>
-
-      <div className="mt-3 text-5xl font-bold text-green-700">
-        {benchmark.topPractices}
-      </div>
-    </div>
-  </div>
-
-  <div className="mt-8 rounded-2xl bg-slate-50 p-6">
-    {audit.quick_score >= benchmark.topPractices ? (
-      <p className="font-medium text-green-700">
-        Your website performs at the level of many top-performing dental
-        websites.
-      </p>
-    ) : audit.quick_score >= benchmark.industryAverage ? (
-      <p className="font-medium text-blue-700">
-        Your website is performing above the dental industry average, but
-        there are still opportunities to close the gap with top-performing
-        practices.
-      </p>
-    ) : (
-      <p className="font-medium text-amber-700">
-        Your website is currently below the industry average. Addressing the
-        opportunities identified in this report may improve patient trust,
-        visibility, and appointment conversion.
-      </p>
-    )}
-  </div>
-</section>
-
+          <div className="mt-8 rounded-2xl bg-slate-50 p-6">
+            {audit.quick_score >= benchmark.topPractices ? (
+              <p className="font-medium text-green-700">
+                Your website performs at the level of many top-performing dental
+                websites.
+              </p>
+            ) : audit.quick_score >= benchmark.industryAverage ? (
+              <p className="font-medium text-blue-700">
+                Your website is performing above the dental industry average,
+                but there are still opportunities to close the gap with
+                top-performing practices.
+              </p>
+            ) : (
+              <p className="font-medium text-amber-700">
+                Your website is currently below the industry average. Addressing
+                the opportunities identified in this report may improve patient
+                trust, visibility, and appointment conversion.
+              </p>
+            )}
+          </div>
+        </section>
 
         <section className="mt-8 rounded-3xl border border-green-100 bg-green-50 p-8 shadow-sm">
-  <h2 className="text-2xl font-bold text-slate-950">
-    Estimated Patient Growth Opportunity
-  </h2>
+          <h2 className="text-2xl font-bold text-slate-950">
+            Estimated Patient Growth Opportunity
+          </h2>
 
-  <p className="mt-3 max-w-3xl text-slate-700">
-    Based on the opportunities detected, your website may be missing signals
-    that help visitors become patient inquiries.
-  </p>
+          <p className="mt-3 max-w-3xl text-slate-700">
+            Based on the opportunities detected, your website may be missing
+            signals that help visitors become patient inquiries.
+          </p>
 
-  <div className="mt-8 grid gap-4 md:grid-cols-2">
-    <div className="rounded-2xl bg-white p-5">
-      <p className="font-semibold text-slate-950">
-        Potential Impact
-      </p>
-      <p className="mt-2 text-3xl font-bold text-green-700">
-        1–5 more inquiries/month
-      </p>
-      <p className="mt-2 text-sm text-slate-600">
-        This is a directional estimate based on common dental website
-        conversion opportunities.
-      </p>
-    </div>
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl bg-white p-5">
+              <p className="font-semibold text-slate-950">Potential Impact</p>
+              <p className="mt-2 text-3xl font-bold text-green-700">
+                1–5 more inquiries/month
+              </p>
+              <p className="mt-2 text-sm text-slate-600">
+                This is a directional estimate based on common dental website
+                conversion opportunities.
+              </p>
+            </div>
 
-    <div className="rounded-2xl bg-white p-5">
-      <p className="font-semibold text-slate-950">
-        Highest-Leverage Fixes
-      </p>
+            <div className="rounded-2xl bg-white p-5">
+              <p className="font-semibold text-slate-950">
+                Highest-Leverage Fixes
+              </p>
 
-      <ul className="mt-3 space-y-2 text-sm text-slate-700">
-        <li>✓ Make appointment booking easier</li>
-        <li>✓ Strengthen local visibility</li>
-        <li>✓ Add patient trust signals</li>
-        <li>✓ Improve mobile experience</li>
-      </ul>
-    </div>
-  </div>
+              <ul className="mt-3 space-y-2 text-sm text-slate-700">
+                <li>✓ Make appointment booking easier</li>
+                <li>✓ Strengthen local visibility</li>
+                <li>✓ Add patient trust signals</li>
+                <li>✓ Improve mobile experience</li>
+              </ul>
+            </div>
+          </div>
 
-  <p className="mt-5 text-sm text-slate-500">
-    This estimate is not a guarantee. Actual results depend on website traffic,
-    local competition, offer strength, and follow-up process.
-  </p>
-</section>
+          <p className="mt-5 text-sm text-slate-500">
+            This estimate is not a guarantee. Actual results depend on website
+            traffic, local competition, offer strength, and follow-up process.
+          </p>
+        </section>
 
-        
         <section className="mt-8 rounded-2xl bg-white p-6 shadow-sm">
           <h2 className="text-2xl font-bold text-slate-950">
             Evidence Behind Your Score
@@ -634,7 +627,10 @@ export default async function PermanentReportPage({
           </div>
         </section>
 
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+        <section
+          id="fix-plan"
+          className="mt-8 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm"
+        >
           <h2 className="text-3xl font-bold text-slate-950">
             Questions About Your Score?
           </h2>
