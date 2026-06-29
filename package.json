@@ -9,13 +9,13 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.108.1",
     "next": "^16.2.7",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "resend": "^6.12.4"
   },
   "devDependencies": {
+    "@supabase/supabase-js": "^2.108.1",
     "@react-pdf/renderer": "^4.3.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
