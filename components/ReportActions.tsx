@@ -72,10 +72,7 @@ https://dentist.auditfix.ai`,
             </p>
           </button>
 
-          <a
-            href={`mailto:?subject=${emailSubject}&body=${emailBody}`}
-            className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:bg-slate-50"
-          >
+          <EmailReportButton reportTitle={reportTitle} websiteUrl={websiteUrl} />
             <div className="text-2xl">📧</div>
 
             <h3 className="mt-3 font-semibold text-slate-950">
