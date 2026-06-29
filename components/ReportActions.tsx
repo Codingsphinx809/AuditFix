@@ -1,7 +1,6 @@
-import EmailReportButton from "@/components/EmailReportButton";
-
 "use client";
 
+import EmailReportButton from "@/components/EmailReportButton";
 import Link from "next/link";
 import { useState } from "react";
 
