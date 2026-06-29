@@ -7,6 +7,7 @@ import { useState } from "react";
 type ReportActionsProps = {
   reportTitle: string;
   websiteUrl: string;
+  auditId: string;
 };
 
 export default function ReportActions({
@@ -15,9 +16,28 @@ export default function ReportActions({
 }: ReportActionsProps) {
   const [copied, setCopied] = useState(false);
 
-  function downloadReport() {
-    window.print();
-  }
+async function downloadReport() {
+  const response = await fetch("/api/download-report", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      auditId,
+      reportType: reportTitle,
+    }),
+  });
+
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "auditfix-report.pdf";
+  link.click();
+
+  window.URL.revokeObjectURL(url);
+}
 
   async function copyLink() {
     await navigator.clipboard.writeText(window.location.href);
@@ -51,7 +71,7 @@ export default function ReportActions({
             <div className="text-2xl">📥</div>
 
             <h3 className="mt-3 font-semibold text-slate-950">
-              Download / Print Report
+              Download PDF Report
             </h3>
 
             <p className="mt-2 text-sm text-slate-600">
