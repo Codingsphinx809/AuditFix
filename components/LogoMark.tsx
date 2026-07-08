@@ -1,22 +1,48 @@
-type LogoMarkProps = {
+import { BRAND } from "@/lib/brand";
+
+type AuditFixLogoProps = {
+  showTagline?: boolean;
   size?: "sm" | "md" | "lg";
 };
 
-export default function LogoMark({ size = "md" }: LogoMarkProps) {
-  const sizes = {
-    sm: "h-10 w-10",
-    md: "h-14 w-14",
-    lg: "h-20 w-20",
+export default function AuditFixLogo({
+  showTagline = true,
+  size = "md",
+}: AuditFixLogoProps) {
+  const markSize = {
+    sm: "h-10 w-14",
+    md: "h-14 w-20",
+    lg: "h-20 w-28",
+  };
+
+  const wordSize = {
+    sm: "text-2xl",
+    md: "text-4xl",
+    lg: "text-6xl",
   };
 
   return (
-    <div className={`relative ${sizes[size]}`} aria-label="AuditFix logo mark">
-      <div className="absolute inset-0 flex items-center justify-center text-[3rem] font-black leading-none text-blue-700">
-        A
+    <div className="flex items-center gap-4">
+      <div className={`relative shrink-0 ${markSize[size]}`}>
+        <div className="absolute left-0 top-0 text-[3.9rem] font-black leading-none tracking-tighter text-blue-700">
+          A
+        </div>
+
+        <div className="absolute bottom-3 left-5 h-2.5 w-9 -rotate-45 rounded-full bg-green-600" />
+        <div className="absolute bottom-4 left-2 h-2.5 w-6 rotate-45 rounded-full bg-green-600" />
       </div>
 
-      <div className="absolute bottom-1 left-1/2 h-3 w-7 -translate-x-1/2 rotate-[-18deg] rounded-full bg-green-600" />
-      <div className="absolute bottom-3 left-[42%] h-3 w-10 rotate-[-42deg] rounded-full bg-green-600" />
+      <div>
+        <div className={`font-black tracking-tight leading-none text-slate-950 ${wordSize[size]}`}>
+          Audit<span className="text-blue-700">Fix</span>
+        </div>
+
+        {showTagline && (
+          <p className="mt-2 max-w-xl text-base leading-6 text-slate-600">
+            {BRAND.tagline}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
