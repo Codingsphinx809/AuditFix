@@ -1,12 +1,15 @@
 import AuditForm from "@/components/AuditForm";
+import BrandHeader from "@/components/BrandHeader";
 export default function Home() {
   return (
     <main className="min-h-screen bg-slate-50 text-slate-950">
       <section className="mx-auto grid max-w-7xl gap-12 px-6 py-16 lg:grid-cols-2 lg:items-center lg:py-24">
         <div>
-          <p className="mb-4 text-sm font-semibold uppercase tracking-wide text-blue-700">
-            Auditfix for Dentists
-          </p>
+          <BrandHeader
+              eyebrow="Free Dental Website Audit"
+              title="Helping dental practices turn website visitors into patients."
+              subtitle="AuditFix analyzes your website for patient trust, local visibility, appointment conversion, website performance, accessibility, and SEO in under two minutes."
+            />
 
           <h1 className="max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
             Discover what may be costing your practice new patients.
