@@ -1,4 +1,5 @@
 import { BRAND } from "@/lib/brand";
+import LogoMark from "@/components/LogoMark";
 
 type BrandHeaderProps = {
   eyebrow?: string;
