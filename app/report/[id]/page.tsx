@@ -226,7 +226,7 @@ export default async function PermanentReportPage({
   const opportunities = buildOpportunities(checks);
   const potentialImpact = getPotentialImpact(checks);
   const generatedAt = new Date(audit.created_at).toLocaleString();
-  const benchmark = getIndustryComparison();
+  const benchmark = getIndustryComparison(audit.quick_score);
 
   return (
     <main className="min-h-screen bg-slate-50 py-12">
