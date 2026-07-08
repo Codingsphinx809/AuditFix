@@ -3,6 +3,7 @@ import DeepScanButton from "@/components/DeepScanButton";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import ReportActions from "@/components/ReportActions";
 import ScoreGauge from "@/components/ScoreGauge";
+import BrandHeader from "@/components/BrandHeader";
 
 type AuditChecks = {
   https: boolean;
@@ -231,14 +232,13 @@ export default async function PermanentReportPage({
   return (
     <main className="min-h-screen bg-slate-50 py-12">
       <div className="mx-auto max-w-6xl px-6">
-        <section className="rounded-3xl bg-white p-8 shadow-sm">
-          <p className="text-sm font-medium text-slate-500">
-            Quick Audit Complete
-          </p>
+        <BrandHeader
+            eyebrow="Quick Audit Complete"
+            title="Patient Growth Quick Score"
+            subtitle="A branded website audit showing how your practice website may affect patient trust, local visibility, appointment requests, and mobile experience."
+        />
 
-          <h1 className="mt-2 text-4xl font-bold text-slate-950">
-            Patient Growth Quick Score
-          </h1>
+  <section className="mt-8 rounded-3xl bg-white p-8 shadow-sm">
 
           <div className="mt-2 space-y-1 text-sm text-slate-500">
             <p>Website analyzed: {audit.website_url}</p>
