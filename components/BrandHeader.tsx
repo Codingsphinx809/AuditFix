@@ -15,9 +15,7 @@ export default function BrandHeader({
   return (
     <header className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
       <div className="flex items-start gap-4">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-700 text-2xl font-black text-white shadow-sm">
-          A
-        </div>
+        <LogoMark size="md" />
 
         <div>
           <p className="text-2xl font-black tracking-tight text-slate-950">
