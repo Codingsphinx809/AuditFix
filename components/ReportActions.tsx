@@ -13,6 +13,7 @@ type ReportActionsProps = {
 export default function ReportActions({
   reportTitle,
   websiteUrl,
+  auditId,
 }: ReportActionsProps) {
   const [copied, setCopied] = useState(false);
 
