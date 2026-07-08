@@ -215,6 +215,7 @@ export default async function PermanentDeepReportPage({
         <ReportActions
           reportTitle="AuditFix Patient Growth Deep Report"
           websiteUrl={audit.website_url}
+          auditId={audit.id}
         />
 
         <section className="mt-8 rounded-2xl border border-blue-100 bg-blue-50 p-6">
