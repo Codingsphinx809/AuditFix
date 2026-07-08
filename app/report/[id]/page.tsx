@@ -2,6 +2,7 @@ import FixPlanForm from "@/components/FixPlanForm";
 import DeepScanButton from "@/components/DeepScanButton";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import ReportActions from "@/components/ReportActions";
+import ScoreGauge from "@/components/ScoreGauge";
 
 type AuditChecks = {
   https: boolean;
@@ -225,7 +226,7 @@ export default async function PermanentReportPage({
   const opportunities = buildOpportunities(checks);
   const potentialImpact = getPotentialImpact(checks);
   const generatedAt = new Date(audit.created_at).toLocaleString();
-  const benchmark = getIndustryComparison(audit.quick_score);
+  const benchmark = getIndustryComparison();
 
   return (
     <main className="min-h-screen bg-slate-50 py-12">
@@ -246,15 +247,7 @@ export default async function PermanentReportPage({
           </div>
 
           <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:items-center">
-            <div className="rounded-2xl bg-blue-50 px-8 py-6 text-center">
-              <div className="text-5xl font-bold text-blue-700">
-                {audit.quick_score}
-              </div>
-              <div className="text-sm font-medium text-blue-700">
-                out of 100
-              </div>
-            </div>
-
+            <ScoreGauge score={audit.quick_score} />
             <div>
               <p className="max-w-xl text-slate-600">
                 {getScoreMessage(audit.quick_score)}
