@@ -270,6 +270,7 @@ export default async function PermanentReportPage({
         <ReportActions
           reportTitle="AuditFix Patient Growth Quick Report"
           websiteUrl={audit.website_url}
+          auditId={audit.id}
         />
 
         <section className="mt-8 rounded-2xl border border-blue-100 bg-blue-50 p-6">
