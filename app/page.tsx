@@ -1,186 +1,182 @@
+import AuditFixLogo from "@/components/AuditFixLogo";
 import AuditForm from "@/components/AuditForm";
-import BrandHeader from "@/components/BrandHeader";
 import ScoreGauge from "@/components/ScoreGauge";
+
+const metrics = [
+  ["50+", "Signals Reviewed", "Patient trust, SEO, speed, mobile, and conversion checks."],
+  ["2 min", "Average Scan", "Fast enough for a practice owner to use between appointments."],
+  ["100%", "Free Report", "No signup required to see the first results."],
+  ["AI", "Clear Insights", "Technical findings translated into growth opportunities."],
+];
+
+const features = [
+  ["✓", "Patient Trust", "Reviews signals that help patients feel confident choosing your practice."],
+  ["📍", "Local SEO", "Checks whether your homepage supports nearby dental search visibility."],
+  ["⚡", "Performance", "Finds speed issues that may cause mobile visitors to leave."],
+  ["📱", "Mobile Experience", "Looks at how easily patients can call, book, or find your office."],
+  ["♿", "Accessibility", "Highlights usability issues that may create friction for visitors."],
+  ["🛡", "Security", "Checks basic trust and safety signals like HTTPS."],
+];
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-slate-50 text-slate-950">
-      <section className="mx-auto grid max-w-7xl gap-12 px-6 py-16 lg:grid-cols-2 lg:items-center lg:py-24">
-        <div>
-          <BrandHeader
-            eyebrow="Free Dental Website Audit"
-            title="Helping dental practices turn website visitors into patients."
-            subtitle="AuditFix analyzes your website for patient trust, local visibility, appointment conversion, website performance, accessibility, and SEO in under two minutes."
-          />
+      <section className="relative overflow-hidden bg-white">
+        <div className="absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-blue-50 to-white" />
 
-          <div className="mt-10">
-            <AuditForm />
-          </div>
+        <div className="relative mx-auto grid max-w-7xl gap-12 px-6 py-12 lg:grid-cols-2 lg:items-center lg:py-20">
+          <div>
+            <AuditFixLogo size="md" />
 
-          <p className="mt-4 text-sm text-slate-500">
-            No signup required to see your results. Email and PDF options are
-            available after the audit.
-          </p>
-        </div>
-
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
-          <div className="mb-6 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">
-                Example Result
+            <div className="mt-10">
+              <p className="text-sm font-black uppercase tracking-[0.25em] text-blue-700">
+                Free Dental Website Audit
               </p>
-              <h2 className="mt-2 text-3xl font-black tracking-tight">
-                Patient Growth Score
-              </h2>
-              <p className="mt-2 text-slate-600">
-                A sample preview of the insights your report will include.
+
+              <h1 className="mt-4 max-w-3xl text-5xl font-black tracking-tight text-slate-950 sm:text-6xl">
+                Know exactly why your website may be losing patients.
+              </h1>
+
+              <p className="mt-6 max-w-2xl text-xl leading-8 text-slate-600">
+                Get a professional Patient Growth Report that reveals
+                opportunities to increase appointment requests, patient trust,
+                local visibility, and mobile conversions.
               </p>
             </div>
 
-            <ScoreGauge score={68} />
-          </div>
-
-          <div className="grid gap-4">
-            <div className="rounded-2xl bg-green-50 p-5">
-              <h3 className="font-bold text-green-900">
-                What&apos;s helping you
-              </h3>
-              <ul className="mt-3 space-y-2 text-sm text-green-800">
-                <li>✓ Secure HTTPS website</li>
-                <li>✓ Contact page is available</li>
-                <li>✓ Location information detected</li>
-              </ul>
+            <div className="mt-10 rounded-3xl border border-slate-200 bg-white p-4 shadow-xl shadow-blue-100/60">
+              <AuditForm />
             </div>
 
-            <div className="rounded-2xl bg-red-50 p-5">
-              <h3 className="font-bold text-red-900">
-                What may be costing you patients
-              </h3>
-              <ul className="mt-3 space-y-2 text-sm text-red-800">
-                <li>✕ Appointment button may be hard to find</li>
-                <li>✕ Mobile speed may reduce patient inquiries</li>
-                <li>✕ Missing local trust signals</li>
-              </ul>
+            <p className="mt-4 text-sm text-slate-500">
+              No signup required. Email and PDF options are available after the
+              audit.
+            </p>
+          </div>
+
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-2xl shadow-blue-100">
+            <div className="flex items-start justify-between gap-6">
+              <div>
+                <p className="text-sm font-black uppercase tracking-[0.2em] text-blue-700">
+                  Live Report Preview
+                </p>
+                <h2 className="mt-3 text-3xl font-black tracking-tight">
+                  Patient Growth Score
+                </h2>
+                <p className="mt-2 text-slate-600">
+                  A sample of the premium report your practice receives.
+                </p>
+              </div>
+
+              <ScoreGauge score={84} />
+            </div>
+
+            <div className="mt-8 rounded-3xl bg-slate-50 p-5">
+              <h3 className="font-bold text-slate-950">How You Compare</h3>
+
+              <div className="mt-5 space-y-4">
+                {[
+                  ["Your Practice", 84, "bg-blue-600"],
+                  ["Top Practices", 92, "bg-green-600"],
+                  ["Industry Average", 59, "bg-slate-400"],
+                ].map(([label, value, color]) => (
+                  <div key={label}>
+                    <div className="mb-2 flex justify-between text-sm font-medium">
+                      <span>{label}</span>
+                      <span>{value}</span>
+                    </div>
+                    <div className="h-3 overflow-hidden rounded-full bg-white">
+                      <div
+                        className={`h-full rounded-full ${color}`}
+                        style={{ width: `${value}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              {[
+                ["More Visitors", "Attract the right patients"],
+                ["More Bookings", "Convert visitors into appointments"],
+                ["More Growth", "Strengthen your practice"],
+                ["More Trust", "Build patient confidence"],
+              ].map(([title, text]) => (
+                <div
+                  key={title}
+                  className="rounded-2xl border border-slate-200 bg-white p-4"
+                >
+                  <p className="font-bold text-slate-950">{title}</p>
+                  <p className="mt-1 text-sm text-slate-600">{text}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
       <section className="border-y border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-6 py-16">
-          <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">
-              What your free audit reveals
-            </p>
-            <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
-              Not just website scores — patient growth opportunities.
-            </h2>
-            <p className="mt-4 text-lg text-slate-600">
-              AuditFix translates technical website issues into clear business
-              insights a dental practice can actually use.
-            </p>
-          </div>
-
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
-            {[
-              [
-                "🦷",
-                "Patient Growth Score",
-                "A simple score showing how ready your site is to attract and convert patients.",
-              ],
-              [
-                "📍",
-                "Local Visibility",
-                "Checks whether your homepage supports local dental search discovery.",
-              ],
-              [
-                "⭐",
-                "Trust & Credibility",
-                "Reviews signals that help patients feel confident choosing your practice.",
-              ],
-              [
-                "📱",
-                "Mobile Experience",
-                "Looks at how easy it is for mobile visitors to call, book, or find you.",
-              ],
-              [
-                "⚡",
-                "Technical Health",
-                "Uses real performance and accessibility data to find hidden blockers.",
-              ],
-            ].map(([icon, title, text]) => (
-              <article
-                key={title}
-                className="rounded-2xl border border-slate-200 bg-slate-50 p-5"
-              >
-                <div className="text-3xl" aria-hidden="true">
-                  {icon}
-                </div>
-                <h3 className="mt-4 font-bold">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">
-                  {text}
-                </p>
-              </article>
-            ))}
-          </div>
+        <div className="mx-auto grid max-w-7xl gap-5 px-6 py-10 sm:grid-cols-2 lg:grid-cols-4">
+          {metrics.map(([value, title, text]) => (
+            <article
+              key={title}
+              className="rounded-3xl border border-slate-200 bg-slate-50 p-6"
+            >
+              <p className="text-4xl font-black text-blue-700">{value}</p>
+              <h3 className="mt-3 font-bold text-slate-950">{title}</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+            </article>
+          ))}
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-16">
-        <div className="grid gap-10 lg:grid-cols-3">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">
-              How it works
-            </p>
-            <h2 className="mt-3 text-3xl font-black">
-              A useful audit in under two minutes.
-            </h2>
-          </div>
+      <section className="mx-auto max-w-7xl px-6 py-20">
+        <div className="max-w-3xl">
+          <p className="text-sm font-black uppercase tracking-[0.25em] text-blue-700">
+            What We Analyze
+          </p>
+          <h2 className="mt-4 text-4xl font-black tracking-tight">
+            Not just website scores — patient growth opportunities.
+          </h2>
+          <p className="mt-4 text-lg leading-8 text-slate-600">
+            AuditFix translates technical website issues into clear business
+            insights a dental practice can actually use.
+          </p>
+        </div>
 
-          <div className="grid gap-5 sm:grid-cols-3 lg:col-span-2">
-            {[
-              [
-                "1",
-                "Enter your website",
-                "Paste your dental practice homepage URL.",
-              ],
-              [
-                "2",
-                "AuditFix analyzes it",
-                "We review patient conversion, visibility, trust, mobile, and speed signals.",
-              ],
-              [
-                "3",
-                "Get your action plan",
-                "See what’s working, what may be hurting you, and what to fix first.",
-              ],
-            ].map(([step, title, text]) => (
-              <article
-                key={step}
-                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-700 font-bold text-white">
-                  {step}
-                </div>
-                <h3 className="mt-5 font-bold">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">
-                  {text}
-                </p>
-              </article>
-            ))}
-          </div>
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {features.map(([icon, title, text]) => (
+            <article
+              key={title}
+              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-2xl">
+                {icon}
+              </div>
+              <h3 className="mt-5 text-xl font-bold">{title}</h3>
+              <p className="mt-2 leading-7 text-slate-600">{text}</p>
+            </article>
+          ))}
         </div>
       </section>
 
       <section className="bg-slate-950 text-white">
-        <div className="mx-auto max-w-7xl px-6 py-16 text-center">
-          <h2 className="text-3xl font-black tracking-tight sm:text-4xl">
-            Find out where your website may be losing patients.
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">
-            Start with a free homepage-level audit. No pressure, no spam, just
-            clear opportunities to improve.
-          </p>
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 lg:grid-cols-2 lg:items-center">
+          <div>
+            <AuditFixLogo size="sm" variant="white" />
+            <h2 className="mt-8 text-4xl font-black tracking-tight">
+              Ready to discover what is holding your website back?
+            </h2>
+            <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-300">
+              Run a free homepage-level audit and get clear opportunities to
+              improve patient trust, local visibility, and appointment requests.
+            </p>
+          </div>
+
+          <div className="rounded-3xl bg-white p-4 text-slate-950 shadow-xl">
+            <AuditForm />
+          </div>
         </div>
       </section>
     </main>
