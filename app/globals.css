@@ -54,3 +54,45 @@ body {
     margin: 0.6in;
   }
 }
+@media print {
+  @page {
+    size: A4;
+    margin: 0.45in;
+  }
+
+  html,
+  body {
+    background: white !important;
+  }
+
+  main {
+    background: white !important;
+    padding: 0 !important;
+  }
+
+  section,
+  article {
+    break-inside: avoid;
+  }
+
+  .pdf-cover {
+    break-after: page;
+  }
+
+  .print-hidden,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  .shadow-sm,
+  .shadow-lg,
+  .shadow-xl,
+  .shadow-2xl {
+    box-shadow: none !important;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
