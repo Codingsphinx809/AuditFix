@@ -220,10 +220,14 @@ function getImpactStyles(impact: Opportunity["impact"]) {
 
 export default async function PermanentReportPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ pdf?: string }>;
 }) {
   const { id } = await params;
+  const { pdf } = await searchParams;
+  const isPdf = pdf === "1";
 
   const { data, error } = await supabaseAdmin
     .from("audits")
@@ -276,11 +280,57 @@ export default async function PermanentReportPage({
         <div className="absolute -left-40 top-72 h-96 w-96 rounded-full bg-green-100/40 blur-3xl" />
 
         <div className="relative mx-auto max-w-7xl px-6 pb-16 pt-10">
-          <BrandHeader
+          {isPdf && (
+            <section className="pdf-cover mb-10 flex min-h-[980px] flex-col justify-between overflow-hidden rounded-[2rem] border border-slate-200 bg-white">
+              <div className="p-12">
+                <BrandHeader />
+
+                <div className="mt-24">
+                  <p className="text-sm font-black uppercase tracking-[0.24em] text-blue-700">
+                    Confidential Report
+                  </p>
+
+                  <h1 className="mt-6 max-w-3xl text-6xl font-black tracking-tight text-slate-950">
+                    Patient Growth Audit Report
+                  </h1>
+
+                  <p className="mt-8 text-2xl text-slate-600">
+                    {audit.website_url}
+                  </p>
+
+                  <div className="mt-16 grid max-w-xl gap-5 text-sm text-slate-600">
+                    <div>
+                      <p className="font-bold text-slate-950">Generated</p>
+                      <p className="mt-1">{generatedAt}</p>
+                    </div>
+
+                    <div>
+                      <p className="font-bold text-slate-950">Report ID</p>
+                      <p className="mt-1">{audit.id}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-slate-950 px-12 py-10 text-white">
+                <p className="text-lg font-bold">
+                  Helping dental practices turn website visitors into patients.
+                </p>
+
+                <p className="mt-2 text-sm text-slate-300">
+                  Prepared exclusively for this practice.
+                </p>
+              </div>
+            </section>
+          )}
+
+          {!isPdf && (
+            <BrandHeader
             eyebrow="Quick Audit Complete"
             title="Patient Growth Quick Report"
-            subtitle="A professional website assessment showing how your practice may affect patient trust, local visibility, appointment requests, and patient experience."
-          />
+              subtitle="A professional website assessment showing how your practice may affect patient trust, local visibility, appointment requests, and patient experience."
+            />
+          )}
 
           <section className="mt-10 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-2xl shadow-blue-100/50">
             <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
@@ -394,13 +444,15 @@ export default async function PermanentReportPage({
             </div>
           </section>
 
-          <div className="mt-8">
-            <ReportActions
-              reportTitle="AuditFix Patient Growth Quick Report"
-              websiteUrl={audit.website_url}
-              auditId={audit.id}
-            />
-          </div>
+          {!isPdf && (
+            <div className="mt-8">
+              <ReportActions
+                reportTitle="AuditFix Patient Growth Quick Report"
+                websiteUrl={audit.website_url}
+                auditId={audit.id}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -751,6 +803,8 @@ export default async function PermanentReportPage({
           </div>
         </section>
 
+        {!isPdf && (
+          <>
         <section className="mt-8 overflow-hidden rounded-[2rem] bg-blue-700 text-white shadow-xl shadow-blue-200/60">
           <div className="grid lg:grid-cols-[1fr_0.9fr]">
             <div className="p-8 sm:p-10">
@@ -800,6 +854,11 @@ export default async function PermanentReportPage({
           </div>
         </section>
 
+          </>
+        )}
+
+        {!isPdf && (
+          <>
         <section
           id="fix-plan"
           className="mt-8 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm sm:p-10"
@@ -863,6 +922,9 @@ export default async function PermanentReportPage({
             <FixPlanForm auditId={audit.id} />
           </div>
         </section>
+
+          </>
+        )}
 
         <section className="mt-8 rounded-3xl border border-blue-100 bg-blue-50 p-6">
           <h2 className="text-lg font-black text-slate-950">
