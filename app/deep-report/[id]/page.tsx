@@ -153,10 +153,14 @@ function getScoreTextColor(score: number | null) {
 
 export default async function PermanentDeepReportPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ pdf?: string }>;
 }) {
   const { id } = await params;
+  const { pdf } = await searchParams;
+  const isPdf = pdf === "1";
 
   const { data, error } = await supabaseAdmin
     .from("audits")
@@ -257,20 +261,108 @@ export default async function PermanentDeepReportPage({
   );
 
   return (
-    <main className="min-h-screen bg-slate-50 pb-20 text-slate-950">
+    <main
+      className={`min-h-screen pb-20 text-slate-950 ${
+        isPdf ? "bg-white" : "bg-slate-50"
+      }`}
+    >
+      {isPdf && (
+        <section className="pdf-cover mx-auto flex min-h-[980px] max-w-7xl flex-col justify-between overflow-hidden bg-white">
+          <div className="p-12">
+            <BrandHeader />
+
+            <div className="mt-24">
+              <p className="text-sm font-black uppercase tracking-[0.24em] text-blue-700">
+                Confidential Technical Report
+              </p>
+
+              <h1 className="mt-6 max-w-4xl text-6xl font-black tracking-tight text-slate-950">
+                Patient Growth Deep Report
+              </h1>
+
+              <p className="mt-8 max-w-3xl text-2xl leading-9 text-slate-600">
+                A comprehensive technical assessment of website performance,
+                accessibility, SEO readiness, and patient experience.
+              </p>
+
+              <p className="mt-12 break-all text-2xl font-semibold text-blue-700">
+                {audit.website_url}
+              </p>
+
+              <div className="mt-16 grid max-w-2xl gap-6 sm:grid-cols-2">
+                <div className="rounded-2xl bg-slate-50 p-5">
+                  <p className="text-sm font-bold uppercase tracking-wide text-slate-500">
+                    Generated
+                  </p>
+                  <p className="mt-2 font-semibold text-slate-950">
+                    {generatedAt}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl bg-slate-50 p-5">
+                  <p className="text-sm font-bold uppercase tracking-wide text-slate-500">
+                    Report ID
+                  </p>
+                  <p className="mt-2 break-all font-semibold text-slate-950">
+                    {audit.id}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-16 max-w-sm rounded-[2rem] bg-slate-950 p-8 text-white">
+                <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-300">
+                  Deep Patient Growth Score
+                </p>
+
+                <p className="mt-5 text-6xl font-black">{deepScore}</p>
+                <p className="mt-2 text-xl font-bold">
+                  {getScoreLabel(deepScore)}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-slate-950 px-12 py-10 text-white">
+            <p className="text-lg font-bold">
+              Helping dental practices turn website visitors into patients.
+            </p>
+
+            <p className="mt-2 text-sm text-slate-300">
+              Prepared exclusively for this practice.
+            </p>
+          </div>
+        </section>
+      )}
+
       <div className="relative overflow-hidden bg-white">
-        <div className="absolute inset-x-0 top-0 h-[520px] bg-gradient-to-b from-blue-50 via-white to-white" />
-        <div className="absolute -right-32 top-24 h-96 w-96 rounded-full bg-blue-100/60 blur-3xl" />
-        <div className="absolute -left-40 top-72 h-96 w-96 rounded-full bg-green-100/40 blur-3xl" />
+        {!isPdf && (
+          <>
+            <div className="absolute inset-x-0 top-0 h-[520px] bg-gradient-to-b from-blue-50 via-white to-white" />
+            <div className="absolute -right-32 top-24 h-96 w-96 rounded-full bg-blue-100/60 blur-3xl" />
+            <div className="absolute -left-40 top-72 h-96 w-96 rounded-full bg-green-100/40 blur-3xl" />
+          </>
+        )}
 
-        <div className="relative mx-auto max-w-7xl px-6 pb-16 pt-10">
-          <BrandHeader
-            eyebrow="Deep Scan Complete"
-            title="Patient Growth Deep Report"
-            subtitle="A comprehensive technical assessment showing how performance, accessibility, SEO, and website quality may affect patient growth."
-          />
+        <div
+          className={`relative mx-auto max-w-7xl px-6 ${
+            isPdf ? "pb-10 pt-0" : "pb-16 pt-10"
+          }`}
+        >
+          {!isPdf && (
+            <BrandHeader
+              eyebrow="Deep Scan Complete"
+              title="Patient Growth Deep Report"
+              subtitle="A comprehensive technical assessment showing how performance, accessibility, SEO, and website quality may affect patient growth."
+            />
+          )}
 
-          <section className="mt-10 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-2xl shadow-blue-100/50">
+          <section
+            className={`overflow-hidden border border-slate-200 bg-white ${
+              isPdf
+                ? "pdf-section rounded-2xl"
+                : "mt-10 rounded-[2rem] shadow-2xl shadow-blue-100/50"
+            }`}
+          >
             <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
               <div className="p-8 sm:p-10 lg:p-12">
                 <div className="flex flex-wrap items-center gap-2">
@@ -382,18 +474,20 @@ export default async function PermanentDeepReportPage({
             </div>
           </section>
 
-          <div className="mt-8">
-            <ReportActions
-              reportTitle="AuditFix Patient Growth Deep Report"
-              websiteUrl={audit.website_url}
-              auditId={audit.id}
-            />
-          </div>
+          {!isPdf && (
+            <div className="mt-8">
+              <ReportActions
+                reportTitle="AuditFix Patient Growth Deep Report"
+                websiteUrl={audit.website_url}
+                auditId={audit.id}
+              />
+            </div>
+          )}
         </div>
       </div>
 
       <div className="mx-auto max-w-7xl px-6">
-        <section className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm sm:p-10">
+        <section className="pdf-section rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm sm:p-10">
           <div className="max-w-3xl">
             <p className="text-sm font-black uppercase tracking-[0.22em] text-blue-700">
               Technical Score Breakdown
@@ -448,7 +542,7 @@ export default async function PermanentDeepReportPage({
           </div>
         </section>
 
-        <section className="mt-8 grid gap-6 lg:grid-cols-2">
+        <section className="pdf-section mt-8 grid gap-6 lg:grid-cols-2">
           <article className="rounded-[2rem] border border-green-100 bg-green-50 p-8">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-600 text-xl font-black text-white">
               ✓
@@ -546,7 +640,7 @@ export default async function PermanentDeepReportPage({
           </article>
         </section>
 
-        <section className="mt-8 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+        <section className="pdf-section mt-8 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-200 bg-slate-950 p-8 text-white sm:p-10">
             <p className="text-sm font-black uppercase tracking-[0.22em] text-blue-300">
               Priority Action Plan
@@ -622,7 +716,7 @@ export default async function PermanentDeepReportPage({
           </div>
         </section>
 
-        <section className="mt-8 rounded-[2rem] border border-green-100 bg-gradient-to-br from-green-50 to-white p-8 shadow-sm sm:p-10">
+        <section className="pdf-section mt-8 rounded-[2rem] border border-green-100 bg-gradient-to-br from-green-50 to-white p-8 shadow-sm sm:p-10">
           <div className="grid gap-10 lg:grid-cols-[1fr_0.8fr] lg:items-center">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.22em] text-green-700">
@@ -665,9 +759,7 @@ export default async function PermanentDeepReportPage({
                 Directional Opportunity
               </p>
 
-              <p className="mt-5 text-5xl font-black tracking-tight">
-                1–5
-              </p>
+              <p className="mt-5 text-5xl font-black tracking-tight">1–5</p>
 
               <p className="mt-2 text-2xl font-bold">
                 more inquiries per month
@@ -687,71 +779,73 @@ export default async function PermanentDeepReportPage({
           </div>
         </section>
 
-        <section
-          id="fix-plan"
-          className="mt-8 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm sm:p-10"
-        >
-          <div className="max-w-3xl">
-            <p className="text-sm font-black uppercase tracking-[0.22em] text-blue-700">
-              Personalized Guidance
-            </p>
+        {!isPdf && (
+          <section
+            id="fix-plan"
+            className="mt-8 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm sm:p-10"
+          >
+            <div className="max-w-3xl">
+              <p className="text-sm font-black uppercase tracking-[0.22em] text-blue-700">
+                Personalized Guidance
+              </p>
 
-            <h2 className="mt-4 text-3xl font-black tracking-tight sm:text-4xl">
-              Want a personalized technical improvement plan?
-            </h2>
+              <h2 className="mt-4 text-3xl font-black tracking-tight sm:text-4xl">
+                Want a personalized technical improvement plan?
+              </h2>
 
-            <p className="mt-4 text-lg leading-8 text-slate-600">
-              Receive focused recommendations for improving mobile speed,
-              accessibility, local visibility, patient trust, and appointment
-              conversion.
-            </p>
-          </div>
+              <p className="mt-4 text-lg leading-8 text-slate-600">
+                Receive focused recommendations for improving mobile speed,
+                accessibility, local visibility, patient trust, and appointment
+                conversion.
+              </p>
+            </div>
 
-          <div className="mt-8 grid gap-4 md:grid-cols-2">
-            {[
-              [
-                "More Appointment Requests",
-                "Recommendations that help visitors become patients.",
-              ],
-              [
-                "Better Local Visibility",
-                "Improve your chances of appearing in nearby searches.",
-              ],
-              [
-                "Improved Patient Trust",
-                "Build credibility through stronger trust and quality signals.",
-              ],
-              [
-                "Faster Mobile Experience",
-                "Create a smoother experience for mobile visitors.",
-              ],
-            ].map(([title, text]) => (
-              <div
-                key={title}
-                className="rounded-3xl border border-slate-200 bg-slate-50 p-5"
-              >
-                <div className="flex items-start gap-3">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-sm font-black text-blue-700">
-                    ✓
-                  </span>
+            <div className="mt-8 grid gap-4 md:grid-cols-2">
+              {[
+                [
+                  "More Appointment Requests",
+                  "Recommendations that help visitors become patients.",
+                ],
+                [
+                  "Better Local Visibility",
+                  "Improve your chances of appearing in nearby searches.",
+                ],
+                [
+                  "Improved Patient Trust",
+                  "Build credibility through stronger trust and quality signals.",
+                ],
+                [
+                  "Faster Mobile Experience",
+                  "Create a smoother experience for mobile visitors.",
+                ],
+              ].map(([title, text]) => (
+                <div
+                  key={title}
+                  className="rounded-3xl border border-slate-200 bg-slate-50 p-5"
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-sm font-black text-blue-700">
+                      ✓
+                    </span>
 
-                  <div>
-                    <p className="font-bold text-slate-950">{title}</p>
-                    <p className="mt-2 text-sm leading-6 text-slate-600">
-                      {text}
-                    </p>
+                    <div>
+                      <p className="font-bold text-slate-950">{title}</p>
+                      <p className="mt-2 text-sm leading-6 text-slate-600">
+                        {text}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          <div className="mt-8">
-            <FixPlanForm auditId={audit.id} />
-          </div>
-        </section>
+            <div className="mt-8">
+              <FixPlanForm auditId={audit.id} />
+            </div>
+          </section>
+        )}
 
-        <section className="mt-8 rounded-3xl border border-blue-100 bg-blue-50 p-6">
+        <section className="pdf-section mt-8 rounded-3xl border border-blue-100 bg-blue-50 p-6">
           <h2 className="text-lg font-black text-slate-950">
             How this Deep Scan was calculated
           </h2>
